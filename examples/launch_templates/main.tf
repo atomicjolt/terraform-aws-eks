@@ -45,7 +45,6 @@ module "eks" {
       instance_type                 = "t2.large"
       asg_desired_capacity          = 1
       public_ip                     = true
-      elastic_inference_accelerator = "eia2.medium"
     },
     {
       name                   = "worker-group-4"
