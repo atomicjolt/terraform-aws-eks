@@ -434,3 +434,9 @@ variable "openid_connect_audiences" {
   default     = []
 }
 
+variable "deletion_protection" {
+  description = "Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled"
+  type        = bool
+  default     = null
+}
+
