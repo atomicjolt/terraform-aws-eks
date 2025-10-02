@@ -18,16 +18,13 @@ locals {
   worker_security_group_id = var.worker_create_security_group ? join("", aws_security_group.workers.*.id) : var.worker_security_group_id
 
   default_iam_role_id    = concat(aws_iam_role.workers.*.id, [""])[0]
-  default_ami_id_linux   = local.workers_group_defaults.ami_id != "" ? local.workers_group_defaults.ami_id : concat(data.aws_ami.eks_worker.*.id, [""])[0]
-  default_ami_id_windows = local.workers_group_defaults.ami_id_windows != "" ? local.workers_group_defaults.ami_id_windows : concat(data.aws_ami.eks_worker_windows.*.id, [""])[0]
+  default_ami_id_linux   = local.workers_group_defaults.ami_id
+  default_ami_id_windows = local.workers_group_defaults.ami_id_windows
 
   worker_group_launch_configuration_count = length(var.worker_groups)
   worker_group_launch_template_count      = length(var.worker_groups_launch_template)
 
   worker_groups_platforms = [for x in concat(var.worker_groups, var.worker_groups_launch_template) : try(x.platform, var.workers_group_defaults["platform"], var.default_platform)]
-
-  worker_ami_name_filter         = coalesce(var.worker_ami_name_filter, "amazon-eks-node-${coalesce(var.cluster_version, "cluster_version")}-v*")
-  worker_ami_name_filter_windows = coalesce(var.worker_ami_name_filter_windows, "Windows_Server-2019-English-Core-EKS_Optimized-${coalesce(var.cluster_version, "cluster_version")}-*")
 
   ec2_principal     = "ec2.${data.aws_partition.current.dns_suffix}"
   sts_principal     = "sts.${data.aws_partition.current.dns_suffix}"
@@ -86,8 +83,8 @@ locals {
     snapshot_id                       = null                        # A custom snapshot ID.
 
     # Settings for launch templates
-    root_block_device_name               = concat(data.aws_ami.eks_worker.*.root_device_name, [""])[0]         # Root device name for Linux workers. If not provided, will assume default Linux AMI was used.
-    root_block_device_name_windows       = concat(data.aws_ami.eks_worker_windows.*.root_device_name, [""])[0] # Root device name for Windows workers. If not provided, will assume default Windows AMI was used.
+    root_block_device_name               = "/dev/xvda"                                                         # Root device name for Linux workers. If not provided, will assume default Linux AMI was used.
+    root_block_device_name_windows       = "/dev/sda1"                                                         # Root device name for Windows workers. If not provided, will assume default Windows AMI was used.
     root_kms_key_id                      = ""                                                                  # The KMS key to use when encrypting the root storage device
     launch_template_id                   = null                                                                # The id of the launch template used for managed node_groups
     launch_template_version              = "$Latest"                                                           # The latest version of the launch template to use in the autoscaling group
