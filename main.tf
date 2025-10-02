@@ -13,6 +13,7 @@ resource "aws_eks_cluster" "this" {
 
   name                      = var.cluster_name
   enabled_cluster_log_types = var.cluster_enabled_log_types
+  deletion_protection       = var.deletion_protection
   role_arn                  = local.cluster_iam_role_arn
   version                   = var.cluster_version
 
